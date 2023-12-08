@@ -108,6 +108,27 @@ def generate_signature(username,password,modulus,private):
 
 # Encryption function
 
+def encryption_message():
+    print(" Encryption ".center(50,"="))
+    text = input("Enter your log : ")
+    text_enc = encryption_rsa(modulus,public_key,text)
+    ob["data"].append(text_enc)
+
+def decryption_message():
+    print(" Decryption  ".center(50,"="))
+    arr_text = ob["data"]
+    if (arr_text != []):
+        k = len(arr_text)
+        selection = int(input(f"Select entry ({k} entries) : "))
+        while (selection < 1 or selection > k):
+            print("Please enter the correct entry !")
+            selection = int(input(f"Select entry ({k} entries) : "))
+        dec_text = decryption_rsa(modulus,private_key,arr_text[selection - 1])
+        print("Decrypted Text : ")
+        print(dec_text)
+    else:
+        print("Data is empty")
+
 def encryption_rsa(modulus,public,message):
     ciphertext = [pow(ord(char), public, modulus) for char in message]
     return ciphertext
@@ -165,11 +186,10 @@ def login():
     global done 
     global user_input
     global ob
+    print(" login  ".center(50,"="))
 
     data = load_database()
-    
-
-    username = input("Enter username : ")
+    username =          input("Enter username       : ")
     
     dict_data = {}
     for ob in data :
@@ -181,20 +201,27 @@ def login():
         username = ""
         return
     
-    password_temp = input("input password : ")
-    private_temp = int(input("Input private key : "))
-    public_temp = int(input("Input public key : "))
-    modulus_temp = int(input("modulus : "))
+    password_temp =     input("input password       : ")
+    private_temp =  int(input("Input private key    : "))
+    public_temp =   int(input("Input public key     : "))
+    modulus_temp =  int(input("modulus              : "))
 
     if (verify_password(username,password_temp,dict_data["signature"],modulus_temp,private_temp,public_temp)):
         print("Success !")
+        print()
+        password = password_temp
+        modulus = modulus_temp
+        private_key = private_temp
+        public_key = public_temp
+        has_login = 1
+
     else:
         print("verificaiton failed")
         logout()
 
 
 def signing():
-    print("=========================== Creating a new section in database ===========================")
+    print(" creating  ".center(50,"="))
     # loading data
     data = load_database()
     usernames = [ob["username"] for ob in data]
@@ -211,9 +238,9 @@ def signing():
     signature = generate_signature(username,password,n,d)
 
     print("Generating keys....")
-    print("Modulus          :",str(n))
     print("Private key (d)  :",str(d))
     print("Public key (e)   :",str(e))
+    print("Modulus          :",str(n))
     print()
     print("Please remember the keys generated to encrypt and decrypt in the future")
 
@@ -233,7 +260,11 @@ def load_database():
     return json_object
 
 def save_database():
-    pass
+    data = load_database()
+    data[ob["id"]] = ob
+    json_object = json.dumps(data, indent=4)
+    with open("./database/data.json", "w") as outfile:
+        outfile.write(json_object)
 
 # trying somehthing
 
@@ -250,35 +281,61 @@ def save_database():
 
 
 def main_menu():
-    print("========================== main menu ==========================")
+    print(" main menu ".center(50,"=") )
     global user_input
     user_input = 0
     print("1.login")
     print("2.logout")
-    print("3.Encryption")
-    print("4.Decryption")
-    print("5.End program")
+    print("3.sign up")
+    print("4.Encryption")
+    print("5.Decryption")
+    print("6.End program")
 
-    user_input = input("Choice : ")
+    user_input = int(input("Choice : "))
 
-    while (user_input < 1 or user_input > 5):
+    while (user_input < 1 or user_input > 6):
         print("Input invalid ! \n")
         user_input = input("Choice : ")
-
-    
+    print()
 
 if __name__ == "__main__":
-    # print("Simple user identification program ")
-    # print()
+    print("Simple user identification program ")
+    print()
 
-    # while not(done):
-    #     main_menu()
+    while not(done):
+        main_menu()
 
-    #     if (user_input == 1):
-    #         if (has_login == 1):
-    #             print("Please logout first")
-    #         else:
-    #             login()
-    signing()
-    login()
+        if (user_input == 1):
+            if (has_login == 1):
+                print("Please logout first")
+            else:
+                login()
+        elif (user_input == 2):
+            if (has_login == 1):
+                logout()
+                print("logout successful !")
+            else:
+                print("You're not in any account right now")
+        elif (user_input == 3):
+            if (not has_login == 1):
+                signing()
+            else:
+                print("You're already in an account...")
+    
+        elif (user_input == 4):
+            if (has_login == 1):
+                encryption_message()
+            else:
+                print("You're not in any account right now")
+        elif (user_input == 5):
+            if (has_login == 1):
+                decryption_message()
+            else:
+                print("You're not in any account right now")
+        elif (user_input == 6):
+            done = 1
+            print(" THANK YOU !  ".center(50,"="))
+            if (ob  != {}):
+                save_database()
+        print()
 
