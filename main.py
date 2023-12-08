@@ -2,6 +2,7 @@ import hashlib
 import json
 import random
 from sympy import *
+from art import *
 
 global username
 global password
@@ -140,7 +141,6 @@ def decryption_rsa(modulus,private,enc_message):
     return message
 
 # verify password
-
 def verify_password(username,password, signature,modulus,private_key, public_key):
 
     # Hash the provided password with SHA-256
@@ -189,7 +189,7 @@ def login():
     print(" login  ".center(50,"="))
 
     data = load_database()
-    username =          input("Enter username       : ")
+    username =          input("Enter username     : ")
     
     dict_data = {}
     for ob in data :
@@ -201,10 +201,10 @@ def login():
         username = ""
         return
     
-    password_temp =     input("input password       : ")
-    private_temp =  int(input("Input private key    : "))
-    public_temp =   int(input("Input public key     : "))
-    modulus_temp =  int(input("modulus              : "))
+    password_temp =     input("input password     : ")
+    private_temp =  int(input("Input private key  : "))
+    public_temp =   int(input("Input public key   : "))
+    modulus_temp =  int(input("modulus            : "))
 
     if (verify_password(username,password_temp,dict_data["signature"],modulus_temp,private_temp,public_temp)):
         print("Success !")
@@ -221,17 +221,17 @@ def login():
 
 
 def signing():
-    print(" creating  ".center(50,"="))
+    print(" Sing Up  ".center(50,"="))
     # loading data
     data = load_database()
     usernames = [ob["username"] for ob in data]
 
-    username = input("Enter username : ")
+    username = input("Enter username   : ")
     while (username in usernames):
         print("That username has already been taken, please enter a new username")
-        username = input("Enter username : ")
+        username = input("Enter username  : ")
 
-    password = input("Enter password: ")
+    password = input("Enter password   : ")
 
     keys = generate_random_key()
     n,e,d = keys
@@ -266,19 +266,6 @@ def save_database():
     with open("./database/data.json", "w") as outfile:
         outfile.write(json_object)
 
-# trying somehthing
-
-
-# # example of implementation
-# k = generate_random_key()
-# print(k)
-# n,e,d = k
-# message = "hello nama saya adalah marvel"
-# mess = encryption_rsa(n,e,message)
-# print(mess)
-# dec = decryption_rsa(n,d,mess)
-# print(dec)
-
 
 def main_menu():
     print(" main menu ".center(50,"=") )
@@ -299,7 +286,7 @@ def main_menu():
     print()
 
 if __name__ == "__main__":
-    print("Simple user identification program ")
+    tprint("identification program")
     print()
 
     while not(done):
