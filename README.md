@@ -22,11 +22,11 @@ A simple implementation utilising both SHA-256 and RSA algorithm to create a uni
 ```bash
 .
 ├─── database
-|   └─── data.json
+│   └─── data.json
 ├─── doc
-│  ├─── IEEE-Template_makalah_IF2120.docx
-│  ├─── TugasMakalah2023.pdf
-│  └─── 13522075-Makalah-Matdis-2023.pdf
+│   ├─── IEEE-Template_makalah_IF2120.docx
+│   ├─── TugasMakalah2023.pdf
+│   └─── 13522075-Makalah-Matdis-2023.pdf
 ├─── screenshots
 │   ├─── dec1.png
 │   ├─── dec2.png
