@@ -28,17 +28,18 @@ import random
 import os
 
 def generate_key_pair():
-    p = 61
-    q = 53
+    p = 2
+    q = 7
 
     n = p * q
     phi_n = (p - 1) * (q - 1)
-    e = 65537
+    e = 5
     d = pow(e, -1, phi_n)
 
     # Public key: (n, e), Private key: (n, d)
     public_key = (n, e)
     private_key = (n, d)
+    print(private_key)
 
     return private_key, public_key
 
@@ -75,6 +76,7 @@ print("Encrypted message saved to 'encrypted_message.txt'")
 
 # Read encrypted message from file
 encrypted_message_from_file = list(map(int, read_from_file('encrypted_message.txt').split(',')))
+print(encrypted_message_from_file)
 
 # Decrypt the message
 decrypted_message = decrypt_message(encrypted_message_from_file, private_key)
