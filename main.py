@@ -114,6 +114,8 @@ def encryption_message():
     text = input("Enter your log : ")
     text_enc = encryption_rsa(modulus,public_key,text)
     ob["data"].append(text_enc)
+    print()
+    print("Encryption successful !")
 
 def decryption_message():
     print(" Decryption  ".center(50,"="))
@@ -155,26 +157,19 @@ def verify_password(username,password, signature,modulus,private_key, public_key
 
     return (verified_password1 == hashed_password) and (verified_password2 == signature)
 
-def logout():
-    global username
-    global password
-    global modulus
-    global private_key
-    global public_key
-    global has_login
-    global done 
-    global user_input
-    global ob 
 
-    user_input = 0
-    modulus = -999
-    public_key = -999
-    private_key = -999
-    username = ""
-    password = ""
-    has_login = -1
-    done = 0
-    ob = {}
+def load_database():
+    with open("./database/data.json", 'r') as openfile:
+        json_object = json.load(openfile)
+    return json_object
+
+def save_database():
+    data = load_database()
+    data[ob["id"]] = ob
+    json_object = json.dumps(data, indent=4)
+    with open("./database/data.json", "w") as outfile:
+        outfile.write(json_object)
+
 
 def login():
     global username
@@ -213,15 +208,39 @@ def login():
         modulus = modulus_temp
         private_key = private_temp
         public_key = public_temp
+        ob = dict_data
         has_login = 1
 
     else:
         print("verificaiton failed")
         logout()
 
+def logout():
+    global username
+    global password
+    global modulus
+    global private_key
+    global public_key
+    global has_login
+    global done 
+    global user_input
+    global ob 
+
+    user_input = 0
+    modulus = -999
+    public_key = -999
+    private_key = -999
+    username = ""
+    password = ""
+    has_login = -1
+    done = 0
+    if (ob != {}):
+        save_database()
+    ob = {}
+
 
 def signing():
-    print(" Sing Up  ".center(50,"="))
+    print(" Sign Up  ".center(50,"="))
     # loading data
     data = load_database()
     usernames = [ob["username"] for ob in data]
@@ -229,7 +248,7 @@ def signing():
     username = input("Enter username   : ")
     while (username in usernames):
         print("That username has already been taken, please enter a new username")
-        username = input("Enter username  : ")
+        username = input("Enter username   : ")
 
     password = input("Enter password   : ")
 
@@ -237,6 +256,7 @@ def signing():
     n,e,d = keys
     signature = generate_signature(username,password,n,d)
 
+    print()
     print("Generating keys....")
     print("Private key (d)  :",str(d))
     print("Public key (e)   :",str(e))
@@ -254,26 +274,16 @@ def signing():
         outfile.write(json_object)
     
 
-def load_database():
-    with open("./database/data.json", 'r') as openfile:
-        json_object = json.load(openfile)
-    return json_object
 
-def save_database():
-    data = load_database()
-    data[ob["id"]] = ob
-    json_object = json.dumps(data, indent=4)
-    with open("./database/data.json", "w") as outfile:
-        outfile.write(json_object)
 
 
 def main_menu():
     print(" main menu ".center(50,"=") )
     global user_input
     user_input = 0
-    print("1.login")
-    print("2.logout")
-    print("3.sign up")
+    print("1.Login")
+    print("2.Logout")
+    print("3.Sign up")
     print("4.Encryption")
     print("5.Decryption")
     print("6.End program")
