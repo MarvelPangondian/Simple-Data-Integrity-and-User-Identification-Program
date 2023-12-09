@@ -3,6 +3,7 @@ import json
 import random
 from sympy import *
 from art import *
+from miscellaneous import *
 
 global username
 global password
@@ -106,43 +107,7 @@ def generate_signature(username,password,modulus,private):
     
     return signature
 
-
-# Encryption function
-
-def encryption_message():
-    print(" Encryption ".center(50,"="))
-    text = input("Enter your log : ")
-    text_enc = encryption_rsa(modulus,public_key,text)
-    ob["data"].append(text_enc)
-    print()
-    print("Encryption successful !")
-
-def decryption_message():
-    print(" Decryption  ".center(50,"="))
-    arr_text = ob["data"]
-    if (arr_text != []):
-        k = len(arr_text)
-        selection = int(input(f"Select entry ({k} entries) : "))
-        while (selection < 1 or selection > k):
-            print("Please enter the correct entry !")
-            selection = int(input(f"Select entry ({k} entries) : "))
-        dec_text = decryption_rsa(modulus,private_key,arr_text[selection - 1])
-        print("Decrypted Text : ")
-        print(dec_text)
-    else:
-        print("Data is empty")
-
-def encryption_rsa(modulus,public,message):
-    ciphertext = [pow(ord(char), public, modulus) for char in message]
-    return ciphertext
-
-def decryption_rsa(modulus,private,enc_message):
-    message = ''
-    for char in enc_message:
-        message += chr(pow(char,private,modulus))
-    return message
-
-# verify password
+# verification functions 
 def verify_password(username,password, signature,modulus,private_key, public_key):
 
     # Hash the provided password with SHA-256
@@ -156,6 +121,75 @@ def verify_password(username,password, signature,modulus,private_key, public_key
     verified_password2 = pow(hashed_password, private_key, modulus)
 
     return (verified_password1 == hashed_password) and (verified_password2 == signature)
+
+
+def verify_content(text,signature):
+    hashed_text = int(hashlib.sha256(text.encode()).hexdigest(), 16)
+    hashed_text = hashed_text % modulus
+
+    # verification 
+    verified_text = pow(signature, public_key, modulus)
+
+    return (verified_text == hashed_text)
+
+
+# Encryption function
+def encryption_message():
+    n,d = modulus,private_key
+
+    # encrpytion text
+    print(" Encryption ".center(50,"="))
+    text = input("Enter your log : ")
+    text_enc = encryption_rsa(modulus,public_key,text)
+    
+    print()
+
+    # creating signature to ensure integrity 
+    hash_message = int(hashlib.sha256(text.encode()).hexdigest(), 16)
+    hash_message = hash_message % n # making sure hash is within range of n
+    signature_text = pow(hash_message, d, n)
+    
+    # adding signature to data
+    text_enc.append(signature_text)
+
+    ob["data"].append(text_enc)
+    print("Encryption successful !")
+
+def decryption_message():
+    print(" Decryption  ".center(50,"="))
+    arr_text = ob["data"]
+    if (arr_text != []):
+        k = len(arr_text)
+        selection = int(input(f"Select entry ({k} entries) : "))
+        while (selection < 1 or selection > k):
+            print("Please enter the correct entry !")
+            selection = int(input(f"Select entry ({k} entries) : "))
+
+
+        dec_text = decryption_rsa(modulus,private_key,arr_text[selection - 1][:-1])
+
+        # verify content 
+        if (not verify_content(dec_text,arr_text[selection - 1][-1])):
+            print_with_color("WARNING, DATA INTEGRITY HAS BEEN COMPROMISED!\n",91)
+            print("CORRUPTED TEXT : ")
+            print(dec_text)
+        else:
+            print("Decrypted Text : ")
+            print(dec_text)
+    else:
+        print("Data is empty")
+
+def encryption_rsa(modulus,public,message):
+    ciphertext = [pow(ord(char), public, modulus) for char in message]
+    return ciphertext
+
+def decryption_rsa(modulus,private,enc_message):
+    message = ''
+    for char in enc_message:
+        temp = pow(char,private,modulus)
+        message += chr(temp%128)
+    return message
+
 
 
 def load_database():
