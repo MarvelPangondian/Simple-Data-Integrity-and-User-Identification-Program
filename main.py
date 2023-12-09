@@ -46,6 +46,7 @@ def gcd(num1,num2):
 def is_coprime(num1,num2):
     return (gcd(num1,num2) == 1)
 
+
 # generates encryption key from modulus and phi_n
 def generate_e_key(n,phi_n):
     e = random.randint(2,(phi_n)//2)
@@ -218,11 +219,11 @@ def login():
     print(" login  ".center(50,"="))
 
     data = load_database()
-    username =          input("Enter username     : ")
-    
+    username = input("Enter username     : ")
+    username_hash = int(hashlib.sha256(username.encode()).hexdigest(), 16)
     dict_data = {}
     for ob in data :
-        if (ob["username"] == username):
+        if (ob["username"] == username_hash):
             dict_data = ob
 
     if not(bool(dict_data)):
@@ -280,9 +281,11 @@ def signing():
     usernames = [ob["username"] for ob in data]
 
     username = input("Enter username   : ")
-    while (username in usernames):
+    username_hash = int(hashlib.sha256(username.encode()).hexdigest(), 16)
+    while (username_hash in usernames):
         print("That username has already been taken, please enter a new username")
         username = input("Enter username   : ")
+        username_hash = int(hashlib.sha256(username.encode()).hexdigest(), 16)
 
     password = input("Enter password   : ")
 
@@ -302,7 +305,7 @@ def signing():
 
 
     # updating data
-    data.extend([{"id":len(data),"username" : username,"signature":signature,"data":[]}])
+    data.extend([{"id":len(data),"username" : username_hash,"signature":signature,"data":[]}])
     json_object = json.dumps(data, indent=4)
     with open("./database/data.json", "w") as outfile:
         outfile.write(json_object)
