@@ -5,32 +5,8 @@ from sympy import *
 from art import *
 from miscellaneous import *
 
-global username
-global password
-global modulus
-global private_key
-global public_key
-global has_login
-global done 
-global user_input
 global ob 
-
-user_input = 0
-modulus = -999
-public_key = -999
-private_key = -999
-username = ""
-password = ""
-has_login = -1
-done = 0
 ob = {}
-
-
-def generate_random_prime():
-    num = random.randint(1000,2000) # simple random prime number
-    while (not (isprime(num))):
-        num = random.randint(1000,2000)
-    return num
 
 
 def gcd(num1,num2):
@@ -42,29 +18,26 @@ def gcd(num1,num2):
         return gcd(num1 - num2, num2)
     return gcd(num1,num2 - num1)
 
+def generate_random_prime():
+    num = random.randint(500,1000)
+    while (not (isprime(num))):
+        num = random.randint(500,1000)
+    return num
 
 def is_coprime(num1,num2):
     return (gcd(num1,num2) == 1)
-
 
 # generates encryption key from modulus and phi_n
 def generate_e_key(n,phi_n):
     e = random.randint(2,(phi_n)//2)
     while not (is_coprime(e,n) and is_coprime(e,phi_n) ):
         e = random.randint(2,(phi_n)//2)
+    if (e > pow(e, -1, phi_n)):
+        return generate_e_key(n,phi_n)
     return e
 
 # creates decryption key from encryption key
 def generate_d_key(e, phi_n):
-    # num = random.randint(1,10)
-    # d = e*num
-    # while ((e * d) % phi_n != 1):
-    #     print(d)
-        
-    #     d += e
-    #     if (d > phi_n-1):# making sure that d is within range
-    #         num = random.randint(1,10)
-    #         d = e*num 
     d = pow(e, -1, phi_n)
     return d
 
@@ -76,12 +49,6 @@ def generate_random_key():
     while (q  == p):
         q = generate_random_prime()
 
-
-    if (q > p):
-        temp = q
-        q = p 
-        p = temp 
-    
     #generate n and phi_n
     n = p*q 
     phi_n = (p - 1) * (q - 1)
@@ -93,7 +60,6 @@ def generate_random_key():
     d = generate_d_key(e,phi_n)
 
     return (n,e,d)
-
 
 def generate_signature(username,password,modulus,private):
     n,d = modulus,private
@@ -112,7 +78,7 @@ def generate_signature(username,password,modulus,private):
 def verify_password(username,password, signature,modulus,private_key, public_key):
 
     # Hash the provided password with SHA-256
-    hashed_password = int(hashlib.sha256((username + password).encode()).hexdigest(), 16)
+    hashed_password = int(hashlib.sha256((username + password).encode()).hexdigest(), 16)       
 
     # Ensure the hashed password is within the range of n
     hashed_password = hashed_password % modulus
@@ -142,9 +108,9 @@ def encryption_message():
     print(" Encryption ".center(50,"="))
     text = input("Enter your log : ")
     text_enc = encryption_rsa(modulus,public_key,text)
+    text_enc = [text_enc]
     
     print()
-
     # creating signature to ensure integrity 
     hash_message = int(hashlib.sha256(text.encode()).hexdigest(), 16)
     hash_message = hash_message % n # making sure hash is within range of n
@@ -155,6 +121,14 @@ def encryption_message():
 
     ob["data"].append(text_enc)
     print("Encryption successful !")
+
+def encryption_rsa(modulus,public,message):
+    ciphertext = [pow(ord(char), public, modulus) for char in message]
+    text_enc = ""
+    for i in ciphertext:
+        text_enc = text_enc + str('{:06}'.format(i)) # pad zero
+    
+    return text_enc
 
 def decryption_message():
     print(" Decryption  ".center(50,"="))
@@ -167,7 +141,7 @@ def decryption_message():
             selection = int(input(f"Select entry ({k} entries) : "))
 
 
-        dec_text = decryption_rsa(modulus,private_key,arr_text[selection - 1][:-1])
+        dec_text = decryption_rsa(modulus,private_key,arr_text[selection - 1][0])
 
         # verify content 
         if (not verify_content(dec_text,arr_text[selection - 1][-1])):
@@ -180,18 +154,32 @@ def decryption_message():
     else:
         print("Data is empty")
 
-def encryption_rsa(modulus,public,message):
-    ciphertext = [pow(ord(char), public, modulus) for char in message]
-    return ciphertext
-
 def decryption_rsa(modulus,private,enc_message):
-    message = ''
-    for char in enc_message:
-        temp = pow(char,private,modulus)
-        message += chr(temp%128)
-    return message
-
-
+    message = enc_message
+    message_parsed  = []
+    message_arr = []
+    i = 0
+    while i < int(len(message)):
+        if ((i + 6) > int(len(message)) ):
+            # do nothing, possible corrupted text
+            pass
+        else:
+            if (message[i:i+6].isnumeric()):
+                message_parsed.append(message[i:i+6])
+            else:
+                pass
+        i += 6
+    for i in range (len(message_parsed)):
+        try:
+            message_arr.append(int(message_parsed[i]))
+        except ValueError:
+            raise ValueError("empty...")
+    decoded_message = ''
+    for char in message_arr:
+        decrypted_char = pow(char, private, modulus)
+        decoded_message += chr(decrypted_char % 128)
+    return decoded_message
+    
 
 def load_database():
     with open("./database/data.json", 'r') as openfile:
@@ -237,7 +225,7 @@ def login():
     modulus_temp =  int(input("modulus            : "))
 
     if (verify_password(username,password_temp,dict_data["signature"],modulus_temp,private_temp,public_temp)):
-        print("Success !")
+        print_with_color("Success !",92)
         print()
         password = password_temp
         modulus = modulus_temp
@@ -247,10 +235,10 @@ def login():
         has_login = 1
 
     else:
-        print("verificaiton failed")
-        logout()
+        print_with_color("verification failed\n",91)
+        logout_and_init()
 
-def logout():
+def logout_and_init():
     global username
     global password
     global modulus
@@ -329,13 +317,13 @@ def main_menu():
 
     while (user_input < 1 or user_input > 6):
         print("Input invalid ! \n")
-        user_input = input("Choice : ")
+        user_input = int(input("Choice : "))
     print()
 
 if __name__ == "__main__":
     tprint("identification program")
     print()
-
+    logout_and_init()
     while not(done):
         main_menu()
 
@@ -346,7 +334,7 @@ if __name__ == "__main__":
                 login()
         elif (user_input == 2):
             if (has_login == 1):
-                logout()
+                logout_and_init()
                 print("logout successful !")
             else:
                 print("You're not in any account right now")

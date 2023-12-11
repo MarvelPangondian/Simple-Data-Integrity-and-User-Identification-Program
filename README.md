@@ -91,15 +91,7 @@ py main.py
 ## Screenshots
 
 ![Main menu](./screenshots/main_menu.png)<br><br>
-![Sign up](./screenshots/signUp.png)<br><br>
-![Login Fail](./screenshots/login_fail.png)<br><br>
-![Login Success](./screenshots/login_success.png)<br><br>
-![First encryption](./screenshots/enc1.png)<br><br>
-![Second encryption](./screenshots/enc2.png)<br><br>
-![Third encryption](./screenshots/enc3.png)<br><br>
-![First decryption](./screenshots/dec1.png)<br><br>
-![Second decryption](./screenshots/dec2.png)<br><br>
-![Third decryption](./screenshots/dec3.png)<br><br>
+
 
 
 ## Links
