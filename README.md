@@ -25,23 +25,26 @@ A simple implementation utilising both SHA-256 and RSA algorithm to create a uni
 ├─── database
 │   └─── data.json
 ├─── doc
+│   ├─── 13522075-Makalah-Matdis-2023.docx
 │   ├─── 13522075-Makalah-Matdis-2023.pdf 
-│   ├─── IEEE-Template_makalah_IF2120.docx
 │   └─── TugasMakalah2023.pdf
 ├─── screenshots
+│   ├─── afterCorr.png
+│   ├─── beforeCorrupt.png
 │   ├─── dec1.png
 │   ├─── dec2.png
-│   ├─── dec3.png
+│   ├─── dec3Corr.png
 │   ├─── enc1.png
 │   ├─── enc2.png
-│   ├─── enc3.png
-│   ├─── login_fail.png
-│   ├─── login_success.png
-│   ├─── main_menu.png
-│   └─── signUp.png
+│   ├─── logFail1.png
+│   ├─── logFail2.png
+│   ├─── logsucc.png
+│   ├─── menu.png
+│   └─── sign.png
 ├─── .gitignore
 ├─── LICENSE
 ├─── main.py
+├─── miscellaneous.py
 ├─── README.md
 └─── requirements.txt
 ```
