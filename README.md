@@ -1,9 +1,9 @@
 
 
-# Simple Authentication Program
+# Simple Data Integrity and User Identification Program
 > Authentication program using SHA-256 and RSA algorithm
 
-A simple implementation utilising both SHA-256 and RSA algorithm to create a unique signature based on username and password. RSA is also used to encrypt and decrypt messages.
+A simple implementation utilising both SHA-256 and RSA algorithm to create a unique signature based on username and password. RSA is also used to encrypt and decrypt messages. This program will check the integrity of a data using digital signature embedded in that data
 
 ## Table Of Contents
 * [Abstract](#abstract)
@@ -17,6 +17,7 @@ A simple implementation utilising both SHA-256 and RSA algorithm to create a uni
 * [Licensing](#licensing)
 
 ## Abstract
+<p align="justify">Kriptografi adalah cabang utama dalam ilmu keamanan komputer yang melibatkan teknik-teknik matematis dan komputasi untuk mengamankan komunikasi dan informasi. Tujuan kriptografi adalah teknik-teknik matematis dan komputasi untuk mengamankan komunikasi dan informasi. Salah satu algoritma yang digunakan untuk enkripsi dan deskripsi teks adalah algoritma RSA, tetapi hanya menggunakan algoritma tersebut dapat menyebabkan berbagai masalah. Salah satunya adalah kunci privat/publik yang tidak sesuai ketika mencoba enkripsi/dekripsi teks, keamanan enkripsi/dekripsi yang tidak terlalu bervariasi, serta integritas data yang tidak dapat dideteksi. Dalam makalah ini, akan dibahas penggunaan algoritma hashing yakni algoritma SHA-256 dalam meningkatkan keamanan data dan identifikasi pengguna, serta memeriksa integritas kunci publik dan privat yang digunakan.</p>
 
 ## Repository Structure 
 ```bash
@@ -49,14 +50,12 @@ A simple implementation utilising both SHA-256 and RSA algorithm to create a uni
 - json
 
 ## Features
+* Validate data integrity
 * Simulate user authentication using SHA-256 and the RSA algorithm.
 * Create a program that encrypts and decrypts text using the RSA algorithm.
 
 
-
-
-
-After running those three commands, you have a variety of options, the options are as follows : <br>
+In the program, you have a variety of options: <br>
 1. Login
 2. Logout
 3. Sign up
@@ -90,7 +89,16 @@ py main.py
 
 ## Screenshots
 
-![Main menu](./screenshots/main_menu.png)<br><br>
+![Main menu](./screenshots/menu.png)<br><br>
+![Signing](./screenshots/sign.png)<br><br>
+![login1 fail](./screenshots/logFail1.png)<br><br>
+![login1 fail2](./screenshots/logFail2.png)<br><br>
+![login1 success](./screenshots/logsucc.png)<br><br>
+![first encryption](./screenshots/enc1.png)<br><br>
+![second encryption](./screenshots/enc2.png)<br><br>
+![first decryption](./screenshots/dec1.png)<br><br>
+![second decryption](./screenshots/dec2.png)<br><br>
+![second decryption fail](./screenshots/dec3Corr.png)<br><br>
 
 
 
