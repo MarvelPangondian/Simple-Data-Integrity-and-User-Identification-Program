@@ -80,7 +80,7 @@ pip install requirements.txt
 ## Developing
 To start trying/modifying code, you need to clone the repository first
 ```shell
-git clone https://github.com/MarvelPangondian/Simple-User-Identification-Program.git
+git clone https://github.com/MarvelPangondian/Simple-Data-Integrity-and-User-Identification-Program
 cd Simple-User-Identification-Program
 pip install requirements.txt
 ```
